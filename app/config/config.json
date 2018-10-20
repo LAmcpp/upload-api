@@ -1,0 +1,29 @@
+{
+  "dev": {
+    "mysql": {
+      "username": "root",
+      "password": "123",
+      "database": "mydb",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    }
+  },
+  "test": {
+    "mysql": {
+      "username": "root",
+      "password": null,
+      "database": "mydb",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    }
+  },
+  "prod": {
+    "mysql": {
+      "username": "root",
+      "password": null,
+      "database": "mydb",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    }
+  }
+}
