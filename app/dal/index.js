@@ -57,13 +57,24 @@ function getMysqlConnection() {
   db.sync = syncMysql;
 
   initDao(db);
+  initRelations(db);
 
   return db;
 }
 
 function initDao(db) {
   require('./userDao').init(db.models);
+  require('./itemDao').init(db.models);
   /** Here init others DAO **/
+}
+
+function initRelations(db) {
+  const User = db.models['user'];
+  const Item = db.models['item'];
+
+  if (User && Item) {
+    Item.belongsTo(User, {foreignKey: "user_id"});
+  }
 }
 
 async function createMysqlDatabases() {
