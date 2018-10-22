@@ -1,13 +1,13 @@
 const
   express = require('express'),
   router = express.Router();
+
 const
   controller = require('../controllers/index'),
   userValidation = require('../controllers/middlewares/userValidation'),
+  itemValidation = require('../controllers/middlewares/itemValidation'),
   userRegistration = require('../controllers/middlewares/userRegistration'),
   authValidation = require('../controllers/middlewares/authValidation');
-
-
 
 router.post('/login/', [
   userValidation.login,
@@ -18,7 +18,7 @@ router.post('/register/', [
   userValidation.registration,
   userValidation.hasUnusedEmail,
   userRegistration,
-  controller.auth,
+  controller.auth
 ]);
 
 router.get('/me/', [
@@ -44,12 +44,40 @@ router.get('/user/', [
   controller.searchUsers
 ]);
 
-router.get("/item/", [controller.searchItems]);
-router.get("/item/:id", [controller.getItemById]);
-router.put("/item/:id", [controller.updateItem]);
-router.delete("/item/:id", [controller.deleteItem]);
-router.post("/item/:id", [controller.createItem]);
-router.post("/item/:id/image/", [controller.uploadItemImage]);
-router.delete("/item/:id/image/", [controller.removeItemImage]);
+router.get("/item/", [
+  itemValidation.searchValidation,
+  controller.searchItems
+]);
+
+router.get("/item/:id", [
+  controller.getItemById
+]);
+
+router.put("/item/:id", [
+  authValidation.tokenValidation,
+  itemValidation.updateValidation,
+  controller.updateItem
+]);
+
+router.delete("/item/:id", [
+  authValidation.tokenValidation,
+  controller.deleteItem
+]);
+
+router.put("/item/", [
+  authValidation.tokenValidation,
+  controller.createItem
+]);
+
+router.post("/item/:id/image/", [
+  authValidation.tokenValidation,
+  itemValidation.uploadValidation,
+  controller.uploadItemImage
+]);
+
+router.delete("/item/:id/image/", [
+  authValidation.tokenValidation,
+  controller.removeItemImage
+]);
 
 module.exports = router;

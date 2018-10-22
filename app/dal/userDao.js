@@ -1,13 +1,16 @@
-const hashHelper = require('../helpers/hashHelper');
+const
+  hashHelper = require('../helpers/hashHelper'),
+  modelName = require('../constants').USER_TYPE,
+  getAttributes = require('../helpers/daoHelper').getUserAttributes;
 
 let User;
 
 function init(models) {
-  User = models['user'];
+  User = models[modelName];
 }
 
 async function create(data) {
-  const hash = hashHelper.hashPassword(data.password);
+  let hash = hashHelper.hashPassword(data.password);
   data = {
     name: data.name,
     email: data.email,
@@ -15,33 +18,38 @@ async function create(data) {
     phone: data.phone
   };
 
-  let newUser = (await User.create(data)).dataValues;
-  newUser.password = hash.hash;
+  let newUser = await User.create(data);
+  if (newUser) {
+    newUser = newUser.dataValues;
+    newUser.password = hash.hash;
+  }
   return newUser;
 }
 
-async function getByEmail(email) {
-  const user = await User.findOne({
-    where: {
-      email: email
-    }
+function getByEmail(email, isValidation) {
+  return getUser({email: email}, isValidation);
+}
+
+function getById(id, isValidation) {
+  return getUser({id: id}, isValidation);
+}
+
+async function getUser(where, isValidation) {
+  let user = await User.find({
+    where: where,
+    attributes: getAttributes(isValidation)
   });
   return user ? user.dataValues : user;
 }
 
-async function getById(id) {
-  return (await User.findByPrimary(id)).dataValues;
-}
-
-async function search(params) {
-  return await User.findAll({
+function search(params) {
+  return User.findAll({
     where: params
   });
 }
 
-async function update(id, fields) {
-  let user = await User.update(fields, { where: { id: id }} );
-  return user;
+function update(id, options) {
+  return User.update(options, { where: { id: id }} );
 }
 
 async function isExistsEmail(email) {

@@ -1,9 +1,11 @@
-const uuid = require('uuid/v4');
+const
+  uuid = require('uuid/v4'),
+  type = require('../constants').ITEM_TYPE;
 
 'use strict';
 
 module.exports = function(sequelize, Sequelize) {
-  let User = sequelize.define('user',
+  let Item = sequelize.define(type,
     {
       id: {
         allowNull: false,
@@ -11,22 +13,21 @@ module.exports = function(sequelize, Sequelize) {
         type: Sequelize.UUID,
         defaultValue: uuid()
       },
-      name: {
+      title: {
         type: Sequelize.STRING,
         notEmpty: true
       },
-      email: {
+      description: {
         type: Sequelize.STRING,
-        validate: {
-          isEmail: true
-        }
+        notEmpty: true
       },
-      phone: {
+      image: {
         type: Sequelize.STRING,
+        notEmpty: false
       },
-      password: {
-        type: Sequelize.STRING,
-        allowNull: false
+      user_id: {
+        type: Sequelize.UUID,
+        allowNull: false,
       },
       created_at: {
         type: Sequelize.DATE,
@@ -45,9 +46,9 @@ module.exports = function(sequelize, Sequelize) {
     }
   );
 
-  User.beforeCreate((user, _ ) => {
-    return user.dataValues.id = uuid();
+  Item.beforeCreate((item, _ ) => {
+    return item.dataValues.id = uuid();
   });
 
-  return User;
+  return Item;
 };

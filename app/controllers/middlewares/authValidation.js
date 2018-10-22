@@ -2,10 +2,12 @@ const
   jwt = require('jsonwebtoken'),
   jwtSecret = require('../../config/index').jwtSecret;
 
+const constants = require('../../constants');
+
 module.exports.tokenValidation = (req, res, next) => {
-  if (req.headers['authorization']) {
+  let authorization = req.headers[constants.AUTH_HEADER];
+  if (authorization) {
     try {
-      let authorization = req.headers['authorization'];
       let user = jwt.verify(authorization, jwtSecret);
 
       if (user.ip != req.ip) {
@@ -13,7 +15,6 @@ module.exports.tokenValidation = (req, res, next) => {
       }
 
       req.body.id = user.id;
-
       return next();
     } catch (err) {
       return res.status(401).send();

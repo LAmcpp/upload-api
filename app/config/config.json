@@ -1,5 +1,8 @@
 {
   "dev": {
+    "host": "127.0.0.1",
+    "port": "3000",
+    "host_name": "http://127.0.0.1:3000",
     "mysql": {
       "username": "root",
       "password": "123",
@@ -9,6 +12,9 @@
     }
   },
   "test": {
+    "host": "127.0.0.1",
+    "port": "3000",
+    "host_name": "http://127.0.0.1:3000",
     "mysql": {
       "username": "root",
       "password": null,
@@ -18,6 +24,9 @@
     }
   },
   "prod": {
+    "host": "127.0.0.1",
+    "port": "3000",
+    "host_name": "http://127.0.0.1:3000",
     "mysql": {
       "username": "root",
       "password": null,

@@ -16,7 +16,3 @@ module.exports.hashPassword = (password, salt) => {
 module.exports.getDatabasePasswordFromHash = (hash)=> {
   return hash.salt + '$' + hash.hash;
 };
-
-// module.exports.getPasswordFromHash = (hash) => {
-//   return hash.hash;
-// };

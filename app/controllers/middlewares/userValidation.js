@@ -2,6 +2,7 @@ const
   userDao = require('../../dal/userDao'),
   validationHelper = require('../../helpers/userValidationHelper'),
   hashHelper = require('../../helpers/hashHelper'),
+  logDatabaseError = require('../../helpers/controllersHelper').logDatabaseError;
   errorsCode = 422;
 
 async function login(req, res, next) {
@@ -16,7 +17,7 @@ async function login(req, res, next) {
 
   let user;
   try {
-    user = await userDao.getByEmail(email);
+    user = await userDao.getByEmail(email, true);
     if (!user) {
       errors.push({field: "email", message: "Wrong email"});
     } else if ( !validationHelper.passwordsEqual(password, user.password) ) {
@@ -95,8 +96,11 @@ async function update(req, res, next) {
       if (errors.length) {
         return res.status(errorsCode).send([{field:"new_password", message: errors[0].message}]);
       }
+      if (oldPassword === newPassword) {
+        return res.status(errorsCode).send([{field:"new_password", message: "The new password must be different from the current one"}]);
+      }
 
-      user = await userDao.getById(req.body.id);
+      user = await userDao.getById(req.body.id, true);
       if (!user) return res.status(404).send();
       if ( !validationHelper.passwordsEqual(oldPassword, user.password) ) {
         return res.status(errorsCode).send([{field:"current_password", message: "Wrong current password"}]);
@@ -147,10 +151,8 @@ async function hasUnusedEmail(req, res, next) {
       return res.status(errorsCode).send([{field: "email", message: `Email ${req.body.email} is already in use`}]);
     }
   } catch (err) {
-    let message = "Access database error";
-    console.error(message);
-    console.error(err.stack || err);
-    return res.status(errorsCode).send([{field: "error", message: message}]);
+    logDatabaseError(err);
+    return res.status(errorsCode).send([{field: "error", message: "Email check error"}]);
   }
   return next();
 }
